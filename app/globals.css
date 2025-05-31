@@ -32,33 +32,43 @@ body {
 }
 
 
-/* CRT Flicker Animation Keyframes */
+/* CRT Flicker Animation Keyframes for "last legs" effect (HOVER EFFECT - REMAINS) */
 @keyframes crt-flicker {
-  0%, 100% { opacity: 1; }
-  5% { opacity: 0.95; }
-  10% { opacity: 1; }
-  15% { opacity: 0.9; }
-  20% { opacity: 1; }
-  25% { opacity: 0.95; }
-  30% { opacity: 1; }
-  35% { opacity: 0.98; }
-  40% { opacity: 1; }
-  45% { opacity: 0.93; }
-  50% { opacity: 1; }
-  55% { opacity: 0.97; }
-  60% { opacity: 1; }
-  65% { opacity: 0.91; }
-  70% { opacity: 1; }
-  75% { opacity: 0.99; }
-  80% { opacity: 1; }
-  85% { opacity: 0.96; }
-  90% { opacity: 1; }
-  95% { opacity: 0.94; }
+  0%   { opacity: 1; text-shadow: 0 0 5px var(--crt-green); }
+  3%   { opacity: 0.9; }
+  6%   { opacity: 1; }
+  10%  { opacity: 0.75; text-shadow: 0 0 7px var(--crt-green); }
+  13%  { opacity: 0.95; }
+  16%  { opacity: 0.5; text-shadow: 0 0 9px var(--crt-green), 0 0 2px var(--crt-green); }
+  20%  { opacity: 1; text-shadow: 0 0 5px var(--crt-green); }
+  23%  { opacity: 0.8; }
+  25%  { opacity: 0.4; }
+  27%  { opacity: 0.85; }
+  30%  { opacity: 1; }
+  35%  { opacity: 0.9; text-shadow: 0 0 6px var(--crt-green); }
+  40%  { opacity: 0.65; }
+  42%  { opacity: 0.9; }
+  45%  { opacity: 0.55; text-shadow: 0 0 8px var(--crt-green); }
+  50%  { opacity: 1; }
+  53%  { opacity: 0.95; }
+  57%  { opacity: 0.6; text-shadow: 0 0 9px var(--crt-green); }
+  60%  { opacity: 0.3; }
+  63%  { opacity: 0.8; }
+  65%  { opacity: 1; text-shadow: 0 0 5px var(--crt-green); }
+  70%  { opacity: 0.85; }
+  75%  { opacity: 0.55; }
+  80%  { opacity: 0.9; text-shadow: 0 0 7px var(--crt-green); }
+  83%  { opacity: 0.45; }
+  86%  { opacity: 0.75; }
+  90%  { opacity: 1; text-shadow: 0 0 5px var(--crt-green); }
+  94%  { opacity: 0.8; }
+  97%  { opacity: 0.6; }
+  100% { opacity: 1; }
 }
 
-/* Apply the flicker animation on hover */
+/* Apply the "last legs" flicker animation on hover (HOVER EFFECT - REMAINS) */
 .crt-flicker-on-hover:hover {
-  animation: crt-flicker 0.5s steps(10, end) infinite; /* Adjust duration and steps */
+  animation: crt-flicker 2s steps(20, end) infinite;
 }
 
 /* Style links to match CRT theme */
@@ -73,7 +83,7 @@ a:hover {
    border-bottom: 1px solid var(--crt-green);
 }
 
-/* Add this inside app/globals.css */
+/* Blink animation for typewriter cursor */
 @keyframes blink {
   0%, 100% { opacity: 1; }
   50% { opacity: 0; }

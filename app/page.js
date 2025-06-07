@@ -24,6 +24,8 @@ const contentSections = [
     { text: 'My Resume', href: 'https://storage.googleapis.com/nicholas_herrewyn_resume/Nicholas_Herrewyn_Resume.pdf' },
     { text: 'Gifford Hill Gold', href: 'https://giffordhillgold.com' },
     { text: 'Sweet Beans Bakery', href: 'https://sweetbeansbaking.com' },
+    { text: 'AI Text-to-Speech', href: '/tts', internal: true },
+    { text: 'Conversational AI Agent', href: '/agent', internal: true }
   ]},
 ];
 

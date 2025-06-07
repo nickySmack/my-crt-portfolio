@@ -1,4 +1,5 @@
 @tailwind utilities;
+
 /* Custom CRT styles */
 :root {
   --crt-green: #0f0; /* Bright green */
@@ -91,4 +92,195 @@ a:hover {
 
 .blink {
   animation: blink 1s step-end infinite;
+}
+
+
+input[type="text"],
+input[type="password"],
+textarea {
+  background-color: transparent;
+  color: var(--crt-green);
+  border: 1px solid var(--crt-green);
+  padding: 0.5rem;
+  font-family: 'Courier New', Courier, monospace;
+  caret-color: var(--crt-green); /* For the cursor */
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+textarea:focus {
+  outline: none;
+  box-shadow: 0 0 5px var(--crt-green), 0 0 3px var(--crt-green) inset; /* Glow effect on focus */
+}
+
+button {
+  color: var(--crt-green);
+  background-color: transparent;
+  border: 1px solid var(--crt-green);
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+button:hover:not(:disabled) {
+  background-color: var(--crt-green);
+  color: var(--crt-dark);
+  text-shadow: none; /* Remove text glow when background is bright green */
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* You might want to add placeholder styles too */
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: var(--crt-green);
+  opacity: 0.6; /* Firefox */
+}
+
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: var(--crt-green);
+  opacity: 0.6;
+}
+
+::-ms-input-placeholder { /* Microsoft Edge */
+  color: var(--crt-green);
+  opacity: 0.6;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px var(--crt-dark) inset !important; /* Use your dark background color */
+  box-shadow: 0 0 0 30px var(--crt-dark) inset !important;
+  -webkit-text-fill-color: var(--crt-green) !important; /* Ensure text color matches */
+  caret-color: var(--crt-green) !important; /* Ensure caret color matches */
+  background-color: transparent !important; /* Explicitly set transparent */
+  background-image: linear-gradient(rgba(15, 255, 0, 0.1) 1px, transparent 1px);
+  color: var(--crt-green) !important;
+}
+
+/* For Firefox if needed, though it's usually less aggressive with autofill backgrounds */
+input:-moz-ui-autofill {
+  box-shadow: 0 0 0 30px var(--crt-dark) inset !important;
+  -moz-text-fill-color: var(--crt-green) !important;
+  caret-color: var(--crt-green) !important;
+  background-color: transparent !important;
+  color: var(--crt-green) !important;
+}
+
+/* Ensure your existing input styles also specify transparent background explicitly */
+input[type="text"],
+input[type="password"],
+textarea {
+  background-color: transparent !important; /* Added !important for emphasis */
+  color: var(--crt-green);
+  border: 1px solid var(--crt-green);
+  padding: 0.5rem;
+  font-family: 'Courier New', Courier, monospace;
+  caret-color: var(--crt-green);
+}
+
+
+/* Kiosk Page Styles */
+.kiosk-container {
+  padding: 2rem;
+  color: #0f0;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.kiosk-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 0.5rem;
+}
+
+.form-group input,
+.form-group textarea {
+  background-color: #000;
+  color: #0f0;
+  border: 1px solid #0f0;
+  padding: 0.5rem;
+  font-family: inherit;
+}
+
+.form-group textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.kiosk-form button {
+  background-color: #0f0;
+  color: #000;
+  border: none;
+  padding: 0.75rem;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: bold;
+}
+
+.kiosk-form button:disabled {
+  background-color: #050;
+  cursor: not-allowed;
+}
+
+.error-message {
+  color: #f00;
+  margin-bottom: 1rem;
+}
+
+.audio-section {
+  margin-top: 2rem;
+}
+
+.audio-section audio {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.audio-visualizer .visualizer-text {
+  font-size: 1.2rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.audio-visualizer .highlighted {
+  background-color: #0f0;
+  color: #000;
+}
+
+/* Blinking cursor animation */
+.cursor {
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  from, to {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+/* You can reuse the text style from the old visualizer */
+.visualizer-text {
+  font-size: 1.2rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  min-height: 1.5em; /* Prevent layout shift */
 }

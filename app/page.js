@@ -8,7 +8,7 @@ import HoverWinkingAvatar from '../components/HoverWinkingAvatar';
 const contentSections = [
   { type: 'heading', level: 1, text: 'Welcome to my web portfolio. Thanks for dropping by.' },
   { type: 'heading', level: 2, text: 'The important stuff:' },
-  { type: 'paragraph', text: 'I am a developer working for NYS ITS. I specialize in the design, development, and maintenance of cloud contact center solutions. This includes ACD, IVR, Chatbots, reporting, and more. I am passionate about tech and learning new things. In my free time I enjoy spending time outside camping, making maple syrup, keeping honey bees, gardening, working on cool tech projects in my lab, and spending time with my family.' },
+  { type: 'paragraph', text: 'I am a developer working for NYS ITS. I specialize in the design, development, and maintenance of cloud contact center solutions. This includes ACD, IVR, Chatbots, reporting, and more. I am passionate about tech and learning new things. In my free time I enjoy spending time outside camping, making maple syrup, keeping honey bees, gardening, playing the accordion, working on cool tech projects in my lab, and spending time with my family.' },
   { type: 'heading', level: 2, text: 'Technical Skills:' },
   { type: 'list', items: [
     'Mastery of NICE InContact Hosted Contact Center, experience with most other contact center solutions',

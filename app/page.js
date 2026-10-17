@@ -3,6 +3,7 @@ import HoverWinkingAvatar from '../components/HoverWinkingAvatar';
 import Terminal from '../components/Terminal';
 import Typewriter from '../components/Typewriter';
 import { about, links, profile, skills } from '../lib/content';
+import { liveDemos } from '../lib/live-demos';
 
 // Rendered on the server so the full portfolio is in the HTML. <Typewriter>
 // animates it on a first visit; data-type-speed sets ms per character.
@@ -53,17 +54,34 @@ export default function Home() {
             Check out some of my other cobweb filled corners of the web!
           </p>
           <ul data-type-speed="15" className="crt-flicker-on-hover ml-4 list-disc">
-            {links.map((link) => (
-              <li key={link.href} className="mb-1 ml-4">
-                {link.internal ? (
-                  <Link href={link.href}>{link.text}</Link>
-                ) : (
-                  <a href={link.href} target="_blank" rel="noopener noreferrer">
-                    {link.text}
-                  </a>
-                )}
-              </li>
-            ))}
+            {links.map((link) => {
+              const demo = liveDemos[link.id];
+              return (
+                <li key={link.href} className="mb-1 ml-4">
+                  {link.internal ? (
+                    <Link href={link.href}>{link.text}</Link>
+                  ) : (
+                    <a href={link.href} target="_blank" rel="noopener noreferrer">
+                      {link.text}
+                    </a>
+                  )}
+                  {demo && (
+                    <div className="mt-2 mb-3 flex flex-wrap items-center gap-x-4 gap-y-1">
+                      <a
+                        href={demo.href}
+                        target="_blank"
+                        rel="noopener"
+                        aria-label={demo.label}
+                        className="btn"
+                      >
+                        [ Try it live ]
+                      </a>
+                      <span className="opacity-80">{demo.note}</span>
+                    </div>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </section>
       </Typewriter>

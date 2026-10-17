@@ -134,6 +134,21 @@ button {
   transition: background-color 0.15s, color 0.15s;
 }
 
+/* A link styled like a button (e.g. "Try it live"). */
+a.btn {
+  display: inline-block;
+  color: var(--phosphor);
+  border: 1px solid var(--phosphor);
+  padding: 0.35rem 1rem;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+a.btn:hover {
+  background-color: var(--phosphor);
+  color: var(--screen);
+  text-shadow: none;
+}
+
 button:hover:not(:disabled) {
   background-color: var(--phosphor);
   color: var(--screen);
@@ -246,6 +261,10 @@ html.intro .after-intro {
 
 [data-tw-active] a {
   border-bottom-color: transparent;
+}
+
+[data-tw-active] a.btn {
+  border-color: transparent;
 }
 
 [data-tw-active] li:not([data-typed])::marker {

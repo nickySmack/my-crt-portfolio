@@ -21,7 +21,9 @@ Next.js 16 (App Router, Turbopack) · React 19 · Tailwind CSS 4 · AI SDK 7 · 
 ## Content
 
 All portfolio copy lives in [`lib/content.js`](lib/content.js). The home page, the terminal
-commands, and nickbot's knowledge all read from it, so edit it in one place.
+commands, and nickbot's knowledge all read from it, so edit it in one place. When the resume
+PDF changes, update `resumeUrl` and the transcribed `resume` object there too — nickbot
+answers from that text, not from the PDF.
 
 ## Environment variables
 

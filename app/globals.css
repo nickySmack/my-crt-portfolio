@@ -1,286 +1,303 @@
-@tailwind utilities;
+/* Tailwind theme + utilities only. Preflight is intentionally skipped so headings
+   and lists keep their browser defaults, which suit the terminal look. */
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);
 
-/* Custom CRT styles */
+/* ---------- Phosphor themes ---------- */
 :root {
-  --crt-green: #0f0; /* Bright green */
-  --crt-dark: #000; /* Black background */
+  --phosphor: #33ff66;
+  --phosphor-dim: color-mix(in srgb, var(--phosphor) 55%, black);
+  --screen: #020a04;
+  --danger: #ff4d4d;
+  --glow: 0 0 2px var(--phosphor), 0 0 8px color-mix(in srgb, var(--phosphor) 55%, transparent);
+  --font-crt: var(--font-vt323), 'Courier New', Courier, monospace;
+}
+
+:root[data-theme='amber'] {
+  --phosphor: #ffb000;
+  --screen: #0d0700;
+}
+
+:root[data-theme='white'] {
+  --phosphor: #e8f0ff;
+  --screen: #05070a;
+}
+
+/* ---------- Base ---------- */
+html {
+  background-color: var(--screen);
 }
 
 body {
-  background-color: var(--crt-dark);
-  color: var(--crt-green);
-  font-family: 'Courier New', Courier, monospace; /* Use a monospace font */
-  padding: 20px;
   margin: 0;
-  /* Optional: Add scan lines effect */
-  background-image: linear-gradient(rgba(15, 255, 0, 0.1) 1px, transparent 1px);
-  background-size: 100% 2px; /* Adjust size for line density */
-  overflow-y: auto; /* Allow scrolling if content overflows */
+  min-height: 100dvh;
+  background-color: var(--screen);
+  color: var(--phosphor);
+  font-family: var(--font-crt);
+  font-size: 1.3rem;
+  line-height: 1.35;
+  text-shadow: var(--glow);
+  -webkit-font-smoothing: antialiased;
+  scrollbar-width: none;
 }
 
-/* Basic CRT glow effect for text */
-p, h1, h2, li {
-  text-shadow: 0 0 5px var(--crt-green); /* Subtle glow */
-}
-
-/* Hide scrollbar but allow scrolling */
 body::-webkit-scrollbar {
-  display: none; /* For Chrome, Safari, and Opera */
-}
-body {
-  -ms-overflow-style: none;  /* For Internet Explorer and Edge */
-  scrollbar-width: none;  /* For Firefox */
+  display: none;
 }
 
-
-/* CRT Flicker Animation Keyframes for "last legs" effect (HOVER EFFECT - REMAINS) */
-@keyframes crt-flicker {
-  0%   { opacity: 1; text-shadow: 0 0 5px var(--crt-green); }
-  3%   { opacity: 0.9; }
-  6%   { opacity: 1; }
-  10%  { opacity: 0.75; text-shadow: 0 0 7px var(--crt-green); }
-  13%  { opacity: 0.95; }
-  16%  { opacity: 0.5; text-shadow: 0 0 9px var(--crt-green), 0 0 2px var(--crt-green); }
-  20%  { opacity: 1; text-shadow: 0 0 5px var(--crt-green); }
-  23%  { opacity: 0.8; }
-  25%  { opacity: 0.4; }
-  27%  { opacity: 0.85; }
-  30%  { opacity: 1; }
-  35%  { opacity: 0.9; text-shadow: 0 0 6px var(--crt-green); }
-  40%  { opacity: 0.65; }
-  42%  { opacity: 0.9; }
-  45%  { opacity: 0.55; text-shadow: 0 0 8px var(--crt-green); }
-  50%  { opacity: 1; }
-  53%  { opacity: 0.95; }
-  57%  { opacity: 0.6; text-shadow: 0 0 9px var(--crt-green); }
-  60%  { opacity: 0.3; }
-  63%  { opacity: 0.8; }
-  65%  { opacity: 1; text-shadow: 0 0 5px var(--crt-green); }
-  70%  { opacity: 0.85; }
-  75%  { opacity: 0.55; }
-  80%  { opacity: 0.9; text-shadow: 0 0 7px var(--crt-green); }
-  83%  { opacity: 0.45; }
-  86%  { opacity: 0.75; }
-  90%  { opacity: 1; text-shadow: 0 0 5px var(--crt-green); }
-  94%  { opacity: 0.8; }
-  97%  { opacity: 0.6; }
-  100% { opacity: 1; }
+h1,
+h2 {
+  font-weight: 400;
+  letter-spacing: 0.02em;
 }
 
-/* Apply the "last legs" flicker animation on hover (HOVER EFFECT - REMAINS) */
-.crt-flicker-on-hover:hover {
-  animation: crt-flicker 2s steps(20, end) infinite;
+h1 {
+  font-size: 2.2rem;
+  line-height: 1.1;
 }
 
-/* Style links to match CRT theme */
+h2 {
+  font-size: 1.7rem;
+}
+
+::selection {
+  background: var(--phosphor);
+  color: var(--screen);
+  text-shadow: none;
+}
+
+:focus-visible {
+  outline: 1px dashed var(--phosphor);
+  outline-offset: 3px;
+}
+
 a {
-  color: var(--crt-green); /* Link color */
-  text-decoration: none; /* No underline by default */
-  border-bottom: 1px dashed var(--crt-green); /* Dashed underline on hover */
-  transition: border-bottom 0.2s ease-in-out;
+  color: var(--phosphor);
+  text-decoration: none;
+  border-bottom: 1px dashed var(--phosphor);
 }
 
 a:hover {
-   border-bottom: 1px solid var(--crt-green);
+  border-bottom-style: solid;
 }
 
-/* Blink animation for typewriter cursor */
+.sr-only-crt {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---------- Form controls ---------- */
+input[type='text'],
+input[type='password'],
+textarea {
+  background-color: transparent;
+  color: var(--phosphor);
+  border: 1px solid var(--phosphor);
+  padding: 0.4rem 0.6rem;
+  font: inherit;
+  text-shadow: inherit;
+  caret-color: var(--phosphor);
+}
+
+input[type='text']:focus,
+input[type='password']:focus,
+textarea:focus {
+  outline: none;
+  box-shadow: 0 0 6px var(--phosphor), inset 0 0 3px var(--phosphor);
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 30px var(--screen) inset !important;
+  -webkit-text-fill-color: var(--phosphor) !important;
+  caret-color: var(--phosphor);
+}
+
+::placeholder {
+  color: var(--phosphor);
+  opacity: 0.5;
+}
+
+button {
+  color: var(--phosphor);
+  background-color: transparent;
+  border: 1px solid var(--phosphor);
+  padding: 0.35rem 1rem;
+  font: inherit;
+  text-shadow: inherit;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+button:hover:not(:disabled) {
+  background-color: var(--phosphor);
+  color: var(--screen);
+  text-shadow: none;
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.error-text {
+  color: var(--danger);
+  text-shadow: 0 0 6px color-mix(in srgb, var(--danger) 60%, transparent);
+}
+
+/* ---------- Animations ---------- */
 @keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
+  50% {
+    opacity: 0;
+  }
 }
 
 .blink {
   animation: blink 1s step-end infinite;
 }
 
-
-input[type="text"],
-input[type="password"],
-textarea {
-  background-color: transparent;
-  color: var(--crt-green);
-  border: 1px solid var(--crt-green);
-  padding: 0.5rem;
-  font-family: 'Courier New', Courier, monospace;
-  caret-color: var(--crt-green); /* For the cursor */
+@keyframes crt-flicker {
+  0%, 20%, 30%, 50%, 65%, 90%, 100% { opacity: 1; }
+  10% { opacity: 0.75; }
+  16% { opacity: 0.5; }
+  25% { opacity: 0.4; }
+  40% { opacity: 0.65; }
+  45% { opacity: 0.55; }
+  60% { opacity: 0.3; }
+  75% { opacity: 0.55; }
+  83% { opacity: 0.45; }
+  97% { opacity: 0.6; }
 }
 
-input[type="text"]:focus,
-input[type="password"]:focus,
-textarea:focus {
-  outline: none;
-  box-shadow: 0 0 5px var(--crt-green), 0 0 3px var(--crt-green) inset; /* Glow effect on focus */
+.crt-flicker-on-hover:hover {
+  animation: crt-flicker 2s steps(20, end) infinite;
 }
 
-button {
-  color: var(--crt-green);
-  background-color: transparent;
-  border: 1px solid var(--crt-green);
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+/* ---------- CRT overlay ---------- */
+.crt-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
 }
 
-button:hover:not(:disabled) {
-  background-color: var(--crt-green);
-  color: var(--crt-dark);
-  text-shadow: none; /* Remove text glow when background is bright green */
+.crt-overlay > div {
+  position: absolute;
+  inset: 0;
 }
 
-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.crt-scanlines {
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 2px,
+    rgb(0 0 0 / 0.28) 3px,
+    rgb(0 0 0 / 0.28) 3px
+  );
+  animation: scan-drift 8s linear infinite;
 }
 
-/* You might want to add placeholder styles too */
-::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
-  color: var(--crt-green);
-  opacity: 0.6; /* Firefox */
+@keyframes scan-drift {
+  to {
+    background-position: 0 3px;
+  }
 }
 
-:-ms-input-placeholder { /* Internet Explorer 10-11 */
-  color: var(--crt-green);
-  opacity: 0.6;
+.crt-overlay > .crt-rollbar {
+  bottom: auto;
+  height: 18vh;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    color-mix(in srgb, var(--phosphor) 6%, transparent) 50%,
+    transparent 100%
+  );
+  animation: roll 9s linear infinite;
 }
 
-::-ms-input-placeholder { /* Microsoft Edge */
-  color: var(--crt-green);
-  opacity: 0.6;
+@keyframes roll {
+  from {
+    transform: translateY(-20vh);
+  }
+  to {
+    transform: translateY(120vh);
+  }
 }
 
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 30px var(--crt-dark) inset !important; /* Use your dark background color */
-  box-shadow: 0 0 0 30px var(--crt-dark) inset !important;
-  -webkit-text-fill-color: var(--crt-green) !important; /* Ensure text color matches */
-  caret-color: var(--crt-green) !important; /* Ensure caret color matches */
-  background-color: transparent !important; /* Explicitly set transparent */
-  background-image: linear-gradient(rgba(15, 255, 0, 0.1) 1px, transparent 1px);
-  color: var(--crt-green) !important;
+.crt-vignette {
+  background: radial-gradient(ellipse at center, transparent 60%, rgb(0 0 0 / 0.55) 100%);
+  box-shadow: inset 0 0 6rem rgb(0 0 0 / 0.7);
+  border-radius: 1.5rem;
 }
 
-/* For Firefox if needed, though it's usually less aggressive with autofill backgrounds */
-input:-moz-ui-autofill {
-  box-shadow: 0 0 0 30px var(--crt-dark) inset !important;
-  -moz-text-fill-color: var(--crt-green) !important;
-  caret-color: var(--crt-green) !important;
-  background-color: transparent !important;
-  color: var(--crt-green) !important;
+/* ---------- Boot + typewriter intro ---------- */
+html.intro [data-typewriter]:not([data-tw-active]) {
+  visibility: hidden;
 }
 
-/* Ensure your existing input styles also specify transparent background explicitly */
-input[type="text"],
-input[type="password"],
-textarea {
-  background-color: transparent !important; /* Added !important for emphasis */
-  color: var(--crt-green);
-  border: 1px solid var(--crt-green);
-  padding: 0.5rem;
-  font-family: 'Courier New', Courier, monospace;
-  caret-color: var(--crt-green);
+html.intro .after-intro {
+  visibility: hidden;
 }
 
+[data-tw-active] a {
+  border-bottom-color: transparent;
+}
 
-/* Kiosk Page Styles */
-.kiosk-container {
+[data-tw-active] li:not([data-typed])::marker {
+  color: transparent;
+}
+
+.tw-cursor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0.5em;
+  background: var(--phosphor);
+  box-shadow: var(--glow);
+  pointer-events: none;
+}
+
+.boot-screen {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: var(--screen);
   padding: 2rem;
-  color: #0f0;
-  font-family: 'Courier New', Courier, monospace;
 }
 
-.kiosk-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 2rem;
+html.booting .boot-screen {
+  display: block;
 }
 
-.form-group {
-  display: flex;
-  flex-direction: column;
+.boot-hint {
+  position: absolute;
+  bottom: 2rem;
+  opacity: 0.6;
 }
 
-.form-group label {
-  margin-bottom: 0.5rem;
+@media (prefers-reduced-motion: reduce) {
+  .crt-scanlines,
+  .crt-rollbar,
+  .blink,
+  .crt-flicker-on-hover:hover {
+    animation: none;
+  }
+  .crt-rollbar {
+    display: none;
+  }
 }
 
-.form-group input,
-.form-group textarea {
-  background-color: #000;
-  color: #0f0;
-  border: 1px solid #0f0;
-  padding: 0.5rem;
-  font-family: inherit;
-}
-
-.form-group textarea {
-  min-height: 100px;
-  resize: vertical;
-}
-
-.kiosk-form button {
-  background-color: #0f0;
-  color: #000;
+/* ---------- Terminal ---------- */
+input.terminal-input,
+input.terminal-input:focus {
   border: none;
-  padding: 0.75rem;
-  cursor: pointer;
-  font-family: inherit;
-  font-weight: bold;
-}
-
-.kiosk-form button:disabled {
-  background-color: #050;
-  cursor: not-allowed;
-}
-
-.error-message {
-  color: #f00;
-  margin-bottom: 1rem;
-}
-
-.audio-section {
-  margin-top: 2rem;
-}
-
-.audio-section audio {
-  width: 100%;
-  margin-bottom: 1rem;
-}
-
-.audio-visualizer .visualizer-text {
-  font-size: 1.2rem;
-  line-height: 1.5;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-}
-
-.audio-visualizer .highlighted {
-  background-color: #0f0;
-  color: #000;
-}
-
-/* Blinking cursor animation */
-.cursor {
-  animation: blink 1s step-end infinite;
-}
-
-@keyframes blink {
-  from, to {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-}
-
-/* You can reuse the text style from the old visualizer */
-.visualizer-text {
-  font-size: 1.2rem;
-  line-height: 1.5;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  min-height: 1.5em; /* Prevent layout shift */
+  padding: 0;
+  box-shadow: none;
+  outline: none; /* the caret is the focus indicator, like a real prompt */
 }

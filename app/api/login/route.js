@@ -1,25 +1,23 @@
-// app/api/login/route.js
-
 import { NextResponse } from 'next/server';
+import { checkCredentials, isConfigured, setSessionCookie } from '../../../lib/session';
+import { clientIp, rateLimit } from '../../../lib/rate-limit';
 
 export async function POST(request) {
-  try {
-    const body = await request.json();
-    const { username, password } = body;
-
-    // Securely access server-side environment variables
-    const validUsername = process.env.APP_USERNAME;
-    const validPassword = process.env.APP_PASSWORD;
-
-    // Check if the provided credentials match the environment variables
-    if (username === validUsername && password === validPassword) {
-      // If they match, send a success response
-      return NextResponse.json({ success: true });
-    } else {
-      // If they don't match, send a failure response
-      return NextResponse.json({ success: false }, { status: 401 }); // 401 Unauthorized
-    }
-  } catch (error) {
-    return NextResponse.json({ success: false, error: 'An internal error occurred' }, { status: 500 });
+  if (!isConfigured()) {
+    console.error('Login disabled: APP_USERNAME, APP_PASSWORD and SESSION_SECRET must be set.');
+    return NextResponse.json({ success: false, message: 'Server configuration error.' }, { status: 500 });
   }
+
+  if (!rateLimit(`login:${clientIp(request)}`, { limit: 10, windowMs: 15 * 60 * 1000 })) {
+    return NextResponse.json({ success: false, message: 'Too many attempts. Try again later.' }, { status: 429 });
+  }
+
+  const { username, password } = await request.json().catch(() => ({}));
+
+  if (!checkCredentials(username, password)) {
+    return NextResponse.json({ success: false, message: 'Access Denied: Invalid Credentials' }, { status: 401 });
+  }
+
+  await setSessionCookie(username);
+  return NextResponse.json({ success: true });
 }

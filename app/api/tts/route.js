@@ -1,84 +1,72 @@
-// app/api/tts/route.js
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
+import { requireSession } from '../../../lib/session';
+import { rateLimit } from '../../../lib/rate-limit';
+import { TTS_MAX_CHARS as MAX_CHARS } from '../../../lib/limits';
 
-// Environment variables for credentials
 const RESEMBLE_API_TOKEN = process.env.RESEMBLE_API_TOKEN;
-const RESEMBLE_VOICE_UUID = process.env.RESEMBLE_VOICE_UUID || "55592656"; // Default if not set
-const VALID_USERNAME = process.env.APP_USERNAME || "user";
-const VALID_PASSWORD = process.env.APP_PASSWORD || "pass";
-
-// --- Rate Limiting (optional but recommended) ---
-const MAX_REQUESTS_PER_IP = parseInt(process.env.MAX_REQUESTS_PER_IP || "10");
-const ipRequestCounts = new Map();
-const rateLimitWindowMs = 60 * 60 * 1000; // 1 hour window
+const RESEMBLE_VOICE_UUID = process.env.RESEMBLE_VOICE_UUID;
+const MAX_REQUESTS_PER_HOUR = parseInt(process.env.MAX_REQUESTS_PER_IP || '10', 10);
 
 export async function POST(request) {
-  const { username, password, text } = await request.json();
+  const { session, response: unauthorized } = await requireSession();
+  if (unauthorized) return unauthorized;
 
-  // --- Authentication ---
-  if (username !== VALID_USERNAME || password !== VALID_PASSWORD) {
-    return NextResponse.json({ success: false, message: "Unauthorized: Invalid credentials." }, { status: 401 });
+  if (!rateLimit(`tts:${session.u}`, { limit: MAX_REQUESTS_PER_HOUR, windowMs: 60 * 60 * 1000 })) {
+    return NextResponse.json({ success: false, message: 'Rate limit exceeded. Please try again later.' }, { status: 429 });
   }
 
-  // --- Rate Limiting ---
-  const ip = request.ip || request.headers.get('x-forwarded-for') || 'unknown';
-  const now = Date.now();
-  if (!ipRequestCounts.has(ip)) {
-    ipRequestCounts.set(ip, []);
+  const { text } = await request.json().catch(() => ({}));
+  if (typeof text !== 'string' || !text.trim()) {
+    return NextResponse.json({ success: false, message: 'Text is required.' }, { status: 400 });
   }
-  const userRequests = ipRequestCounts.get(ip).filter(timestamp => now - timestamp < rateLimitWindowMs);
-  if (userRequests.length >= MAX_REQUESTS_PER_IP) {
-    ipRequestCounts.set(ip, userRequests);
-    return NextResponse.json({ success: false, message: "Rate limit exceeded. Please try again later." }, { status: 429 });
+  if (text.length > MAX_CHARS) {
+    return NextResponse.json({ success: false, message: `Text must be ${MAX_CHARS} characters or fewer.` }, { status: 400 });
   }
-  ipRequestCounts.get(ip).push(now);
 
-  // --- Resemble API Call ---
-  if (!RESEMBLE_API_TOKEN) {
-    console.error("RESEMBLE_API_TOKEN is not set.");
-    return NextResponse.json({ success: false, message: "Server configuration error." }, { status: 500 });
+  if (!RESEMBLE_API_TOKEN || !RESEMBLE_VOICE_UUID) {
+    console.error('RESEMBLE_API_TOKEN and RESEMBLE_VOICE_UUID must be set.');
+    return NextResponse.json({ success: false, message: 'Server configuration error.' }, { status: 500 });
   }
 
   try {
-    // Correct API endpoint and request structure based on user-provided documentation
-    const resembleResponse = await fetch("https://f.cluster.resemble.ai/synthesize", {
+    const resembleResponse = await fetch('https://f.cluster.resemble.ai/synthesize', {
       method: 'POST',
       headers: {
-        // Corrected Authentication Header
-        'Authorization': `Bearer ${RESEMBLE_API_TOKEN}`,
+        Authorization: `Bearer ${RESEMBLE_API_TOKEN}`,
         'Content-Type': 'application/json',
       },
-      // Corrected Request Body
       body: JSON.stringify({
         voice_uuid: RESEMBLE_VOICE_UUID,
         data: text,
-        output_format: "mp3",
-        sample_rate: 44100 // Common sample rate, supported by Resemble
+        output_format: 'mp3',
+        sample_rate: 44100,
       }),
     });
 
     if (!resembleResponse.ok) {
       const errorData = await resembleResponse.json().catch(() => ({}));
-      console.error("Resemble API Error:", resembleResponse.status, errorData);
-      return NextResponse.json({ success: false, message: `Resemble API Error: ${errorData.message || resembleResponse.statusText}` }, { status: resembleResponse.status });
+      console.error('Resemble API Error:', resembleResponse.status, errorData);
+      return NextResponse.json(
+        { success: false, message: `Resemble API Error: ${errorData.message || resembleResponse.statusText}` },
+        { status: 502 }
+      );
     }
 
     const responseData = await resembleResponse.json();
-    
-    // Correctly handle the flat response structure
+
     if (responseData.success && responseData.audio_content) {
       return NextResponse.json({
         success: true,
         audio_content: responseData.audio_content,
-        audio_timestamps: responseData.audio_timestamps, // Pass the timestamps to the frontend
+        audio_timestamps: responseData.audio_timestamps,
       });
-    } else {
-      // Pass along any issues reported by the API
-      return NextResponse.json({ success: false, message: "Failed to synthesize audio.", issues: responseData.issues });
     }
-
+    return NextResponse.json(
+      { success: false, message: 'Failed to synthesize audio.', issues: responseData.issues },
+      { status: 502 }
+    );
   } catch (error) {
-    console.error("Internal Server Error:", error);
-    return NextResponse.json({ success: false, message: "Internal Server Error" }, { status: 500 });
+    console.error('Internal Server Error:', error);
+    return NextResponse.json({ success: false, message: 'Internal Server Error' }, { status: 500 });
   }
 }

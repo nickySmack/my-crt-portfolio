@@ -1,47 +1,38 @@
-'use client'; // This component needs client-side interactivity
+'use client';
 
 import { useState } from 'react';
-import Image from 'next/image'; // Using Next.js Image component is recommended for optimization
+import Image from 'next/image';
 
-const HoverWavingAvatar = ({
+// Swaps to the animated GIF on hover, and on tap for touch screens.
+const HoverWinkingAvatar = ({
   staticSrc,
   animatedSrc,
-  alt = '8-bit avatar', // Add a default alt text for accessibility
-  width = 64, // Default width
-  height = 64, // Default height
-  className = '', // Allows adding custom classes
+  alt = '8-bit avatar',
+  width = 64,
+  height = 64,
+  className = '',
 }) => {
-  const [isHovered, setIsHovered] = useState(false);
-
-  const handleMouseEnter = () => {
-    setIsHovered(true);
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovered(false);
-  };
-
-  // Determine which source to use based on hover state
-  const currentSrc = isHovered ? animatedSrc : staticSrc;
+  const [isAnimating, setIsAnimating] = useState(false);
 
   return (
     <div
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      // Optional: Add classes to the container div for layout/positioning
-      className={`inline-block ${className}`}
+      onMouseEnter={() => setIsAnimating(true)}
+      onMouseLeave={() => setIsAnimating(false)}
+      onClick={() => setIsAnimating((a) => !a)}
+      className={`inline-block shrink-0 ${className}`}
     >
-      {/* Using Next.js Image component for optimized images */}
       <Image
-        src={currentSrc}
+        src={isAnimating ? animatedSrc : staticSrc}
         alt={alt}
         width={width}
         height={height}
-        // Optional: Add classes directly to the Image tag if needed
-        // className="some-image-class"
+        unoptimized
+        loading="eager"
       />
+      {/* Warm the cache so the first hover doesn't flash. */}
+      <link rel="preload" as="image" href={animatedSrc} />
     </div>
   );
 };
 
-export default HoverWavingAvatar;
+export default HoverWinkingAvatar;

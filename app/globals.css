@@ -90,6 +90,122 @@ a:hover {
   white-space: nowrap;
 }
 
+/* ---------- DOOM title logo ---------- */
+.doom-logo {
+  display: block;
+  width: 100%;
+  max-width: 44rem;
+  height: auto;
+  max-height: 16rem; /* short words would otherwise scale up huge; WELCOME is ~15.7rem */
+  margin: 0 auto;
+  overflow: visible;
+}
+
+/* ---------- Nick face (components/NickFace.js) ---------- */
+.pixelated {
+  image-rendering: pixelated;
+}
+
+.nick-face-invite {
+  position: absolute;
+  left: 30%;
+  top: 5%;
+  width: 33.333%;
+  height: auto;
+  pointer-events: none;
+  animation: nick-face-throw 380ms cubic-bezier(0.4, 0.1, 0.8, 0.5) forwards;
+}
+
+@keyframes nick-face-throw {
+  0% { transform: translate(400%, -40%) rotate(0deg); opacity: 1; }
+  55% { transform: translate(180%, -90%) rotate(-200deg); }
+  99% { transform: translate(0, 0) rotate(-360deg); opacity: 1; }
+  100% { transform: translate(0, 0) rotate(-360deg); opacity: 0; }
+}
+
+.nick-face {
+  --gold: #ffd040; /* the DOOM logo's gold */
+}
+
+/* Combat text: pops where the invite lands, then rises in choppy 8-bit steps and fades. */
+.nick-face-float {
+  position: absolute;
+  left: 50%;
+  top: 18%;
+  z-index: 1;
+  font-size: 2.2rem;
+  line-height: 1;
+  white-space: nowrap;
+  pointer-events: none;
+  animation: nick-face-float 900ms steps(5, end) forwards;
+}
+
+.nick-face-float[data-kind='damage'] {
+  color: var(--danger);
+  text-shadow: 2px 2px 0 #000, 0 0 8px color-mix(in srgb, var(--danger) 70%, transparent);
+}
+
+.nick-face-float[data-kind='block'],
+.nick-face-float[data-kind='cheat'] {
+  color: var(--gold);
+  text-shadow: 2px 2px 0 #000, 0 0 10px color-mix(in srgb, var(--gold) 70%, transparent);
+}
+
+/* IDDQD: typed big over the face, then bursts up while its letters scatter. */
+.nick-face-float[data-kind='cheat'] {
+  top: 32%;
+  font-size: clamp(2.6rem, 10vw, 3.8rem);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  animation: nick-face-cheat 1400ms steps(6, end) forwards;
+}
+
+.nick-face-float[data-kind][data-typing] {
+  animation: none;
+  transform: translateX(-50%);
+}
+
+@keyframes nick-face-float {
+  0% { transform: translate(-50%, 0) scale(1.5); opacity: 1; }
+  12% { transform: translate(-50%, -4px) scale(1); opacity: 1; }
+  65% { transform: translate(calc(-50% + var(--dx, 0px) * 0.6), -36px) scale(1); opacity: 1; }
+  100% { transform: translate(calc(-50% + var(--dx, 0px)), -56px) scale(1); opacity: 0; }
+}
+
+@keyframes nick-face-cheat {
+  0% { transform: translate(-50%, 0) scale(1); letter-spacing: 0.08em; opacity: 1; }
+  15% { transform: translate(-50%, -4px) scale(1.3); letter-spacing: 0.08em; opacity: 1; }
+  55% { transform: translate(-50%, -24px) scale(1.3); letter-spacing: 0.12em; opacity: 1; }
+  100% { transform: translate(-50%, -72px) scale(1.5); letter-spacing: 0.6em; opacity: 0; }
+}
+
+/* Latest event under the button: holds, then fades like a DOOM HUD message. */
+.nick-face-caption {
+  animation: nick-face-caption 3.5s forwards;
+}
+
+[data-tone='gold'] {
+  color: var(--gold);
+  text-shadow: 0 0 2px var(--gold), 0 0 8px color-mix(in srgb, var(--gold) 55%, transparent);
+}
+
+@keyframes nick-face-caption {
+  0%, 80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes nick-face-fade {
+  0%, 60% { transform: translateX(-50%); opacity: 1; }
+  100% { transform: translateX(-50%); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nick-face-float[data-kind] {
+    animation-name: nick-face-fade;
+    animation-timing-function: linear;
+  }
+}
+
 /* ---------- Form controls ---------- */
 input[type='text'],
 input[type='password'],
@@ -263,7 +379,8 @@ html.intro .after-intro {
   border-bottom-color: transparent;
 }
 
-[data-tw-active] a.btn {
+[data-tw-active] a.btn,
+[data-tw-active] button {
   border-color: transparent;
 }
 
@@ -298,6 +415,30 @@ html.booting .boot-screen {
   position: absolute;
   bottom: 2rem;
   opacity: 0.6;
+}
+
+/* DOOM screen melt (lib/melt.js): column copies of the boot screen fall away. */
+.melt {
+  position: fixed;
+  inset: 0;
+  z-index: 45;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.melt-col {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  overflow: hidden;
+  will-change: transform;
+}
+
+.melt .boot-screen {
+  display: block;
+  position: absolute;
+  top: 0;
+  box-sizing: border-box;
 }
 
 @media (prefers-reduced-motion: reduce) {

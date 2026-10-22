@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { melt } from '../lib/melt';
 
 const DEFAULT_SPEED = 15; // ms per character
 const BLOCK_PAUSE = 120; // ms between blocks
@@ -26,6 +27,7 @@ export default function Typewriter({ children }) {
   const textRef = useRef(null);
   const cursorRef = useRef(null);
   const bootRef = useRef(null);
+  const screenRef = useRef(null);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -36,8 +38,10 @@ export default function Typewriter({ children }) {
     const container = textRef.current;
     const cursor = cursorRef.current;
     const boot = bootRef.current;
+    const screen = screenRef.current;
     const timers = [];
     let frame;
+    let stopMelt;
     let finished = false;
 
     // Every non-blank text node, with the typing speed of its block.
@@ -74,11 +78,19 @@ export default function Typewriter({ children }) {
       cursor.hidden = true;
     };
 
+    // Melt the boot screen away to reveal the page, the way DOOM changes screens.
+    const dropBootScreen = () => {
+      if (!root.classList.contains('booting')) return;
+      stopMelt = melt(screen);
+      root.classList.remove('booting');
+    };
+
     const finish = () => {
       if (finished) return;
       finished = true;
+      dropBootScreen();
       restore();
-      root.classList.remove('intro', 'booting');
+      root.classList.remove('intro');
       try {
         sessionStorage.setItem('intro-seen', '1');
       } catch {}
@@ -96,7 +108,7 @@ export default function Typewriter({ children }) {
     };
 
     const type = () => {
-      root.classList.remove('booting');
+      dropBootScreen();
       cursor.hidden = false;
       let seg = 0;
       let offset = 0;
@@ -156,6 +168,7 @@ export default function Typewriter({ children }) {
         // Unmounted mid-intro (or StrictMode's dev re-run): undo, but leave the
         // `intro` class so a re-mount can start over.
         restore();
+        stopMelt?.();
         root.classList.remove('booting');
       }
     };
@@ -163,7 +176,7 @@ export default function Typewriter({ children }) {
 
   return (
     <>
-      <div className="boot-screen" aria-hidden="true">
+      <div ref={screenRef} className="boot-screen" aria-hidden="true">
         <pre ref={bootRef} className="m-0 font-[inherit] whitespace-pre-wrap" />
         <p className="boot-hint">Press any key to skip</p>
       </div>

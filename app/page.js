@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import HoverWinkingAvatar from '../components/HoverWinkingAvatar';
+import DoomLogo from '../components/DoomLogo';
+import NickFace from '../components/NickFace';
 import Terminal from '../components/Terminal';
 import Typewriter from '../components/Typewriter';
 import { about, links, profile, skills } from '../lib/content';
@@ -11,17 +12,15 @@ export default function Home() {
   return (
     <main className="mx-auto max-w-4xl px-4 py-8">
       <Typewriter>
-        <header className="flex items-center gap-4 mb-8">
-          <HoverWinkingAvatar
-            staticSrc="/8bit-avatar.png"
-            animatedSrc="/8bit-avatar.gif"
-            alt={`8-bit avatar of ${profile.name}`}
-            width={120}
-            height={120}
-          />
-          <h1 data-type-speed="30" className="crt-flicker-on-hover my-0 flex-1">
-            {profile.greeting}
+        <header className="mb-8">
+          <h1 className="mt-0 mb-2">
+            <span className="sr-only-crt">{profile.greeting}</span>
+            <DoomLogo text={profile.greeting} />
           </h1>
+          <NickFace />
+          <p data-type-speed="30" className="crt-flicker-on-hover mt-6 mb-0 text-[2.2rem] leading-[1.1]">
+            {profile.tagline}
+          </p>
         </header>
 
         <section aria-labelledby="about-heading">

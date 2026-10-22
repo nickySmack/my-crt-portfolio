@@ -132,10 +132,14 @@ export default function Terminal() {
   const endRef = useRef(null);
 
   // Keep the prompt in view as output arrives (but don't jump there on page load).
-  const mounted = useRef(false);
+  // Compares against the lines last seen rather than a "mounted" flag, which
+  // StrictMode's second effect run in dev would flip and then scroll anyway.
+  const shownLines = useRef(null);
   useEffect(() => {
-    if (mounted.current) endRef.current?.scrollIntoView({ block: 'nearest' });
-    mounted.current = true;
+    if (shownLines.current && shownLines.current !== lines) {
+      endRef.current?.scrollIntoView({ block: 'nearest' });
+    }
+    shownLines.current = lines;
   }, [lines]);
 
   // After the intro, typing anywhere on the page goes to the prompt.
